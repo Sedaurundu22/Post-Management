@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        progressBar {
+            width: 100% ;
+            height: 30px;
+            background-color: lightgray;
+            margin-top: 10px;
+            display: none;
+        }
+        progressBar div {
+            height: 100%;
+            background-color: green;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+        }
+        
+        body {
+  				background-color: lightblue;
+			}
+	
+    </style>
+</head>
+<body>
+    <h1>File Upload</h1>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="uploadFiles()">Upload</button>
+    <div id="progressBar">
+        <div id="progressBarValue">0%</div>
+    </div>
+
+    <script>
+        function uploadFiles() {
+            var files = document.getElementById('fileInput').files;
+            var formData = new FormData();
+
+            for (var i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.upload.onprogress = function(event) {
+                var progressBar = document.getElementById('progressBar');
+                var progressBarValue = document.getElementById('progressBarValue');
+                progressBar.style.display = 'block';
+                progressBarValue.style.width = (event.loaded / event.total) * 100 + '%';
+                progressBarValue.innerHTML = Math.round((event.loaded / event.total) * 100) + '%';
+            };
+
+            xhr.onload = function() {
+                var progressBar = document.getElementById('progressBar');
+                progressBar.style.display = 'none';
+                alert('Upload completed!');
+            };
+
+            xhr.open('POST', 'uploadServlet', true);
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
